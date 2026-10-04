@@ -1,662 +1,153 @@
 ---
-# try also 'default' to start simple
-theme: seriph
-# random image from a curated Unsplash collection by Anthony
-# like them? see https://unsplash.com/collections/94734566/slidev
-background: https://cover.sli.dev
-# some information about your slides (markdown enabled)
-title: Welcome to Slidev
+theme: default
+layout: default
+title: OpenWAF — obrona aplikacji i analiza AI
 info: |
-  ## Slidev Starter Template
-  Presentation slides for developers.
-
-  Learn more at [Sli.dev](https://sli.dev)
-# apply UnoCSS classes to the current slide
-class: text-center
-# https://sli.dev/features/drawing
+  10 slajdów po polsku opartych na lokalnym kodzie OpenWAF.
+author: OpenWAF
+lang: pl
+colorSchema: dark
+aspectRatio: 16/9
+canvasWidth: 1200
+transition: fade
 drawings:
   persist: false
-# slide transition: https://sli.dev/guide/animations.html#slide-transitions
-transition: slide-left
-# enable Comark Syntax: https://comark.dev/syntax/markdown
-comark: true
-# duration of the presentation
-duration: 35min
+duration: 15min
+fonts:
+  sans: Figtree
+  mono: Consolas
+  provider: none
 ---
 
-# Welcome to Slidev
-
-Presentation slides for developers
-
-<div @click="$slidev.nav.next" class="mt-12 py-1" hover:bg="white op-10">
-  Press Space for next page <carbon:arrow-right />
-</div>
-
-<div class="abs-br m-6 text-xl">
-  <button @click="$slidev.nav.openInEditor()" title="Open in Editor" class="slidev-icon-btn">
-    <carbon:edit />
-  </button>
-  <a href="https://github.com/slidevjs/slidev" target="_blank" class="slidev-icon-btn">
-    <carbon:logo-github />
-  </a>
-</div>
+<div class="eyebrow brand"><svg viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="M12 3 20 6v6c0 5-4 8-8 10-4-2-8-5-8-10V6Z" stroke="currentColor" stroke-width="1.8"/><path d="m8 12 3 3 5-6" stroke="currentColor" stroke-width="1.8"/></svg>OpenWAF</div>
+<div class="hero"><h1>Ochrona aplikacji.<br><span>Analiza z AI.</span></h1><div class="pills"><span>Reverse proxy</span><span>Coraza + OWASP CRS</span><span>Asystent AI</span></div></div>
+<ScreenshotSlot class="hero-metrics" src="/screenshots/dashboard.png" title="Statystyki ochrony OpenWAF — dane demo" :crop="[0.18, 0.14, 0.8, 0.21]" />
+<div class="caption">Rzeczywisty panel · dane demonstracyjne</div>
 
 <!--
-The last comment block of each slide will be treated as slide notes. It will be visible and editable in Presenter Mode along with the slide. [Read more in the docs](https://sli.dev/guide/syntax.html#notes)
+Prezentacja opisuje kod z C:\Users\Anonym\Desktop\OpenWAF. Projekt łączy reverse proxy w Go, silnik Coraza z OWASP CRS, panel Nuxt i analizę AI. Reguły podejmują decyzję dla żądania, a AI bada telemetrię poza tą ścieżką.
+Źródła: main.go; internal/proxy/proxy.go; internal/rules/engine.go; internal/assistant/service.go.
 -->
 
 ---
-transition: fade-out
----
 
-# What is Slidev?
+<div class="eyebrow">Przepływ żądania</div>
 
-Slidev is a slides maker and presenter designed for developers, consist of the following features
+# Gdzie działa ochrona?
 
-- 📝 **Text-based** - focus on the content with Markdown, and then style them later
-- 🎨 **Themable** - themes can be shared and re-used as npm packages
-- 🧑‍💻 **Developer Friendly** - code highlighting, live coding with autocompletion
-- 🤹 **Interactive** - embed Vue components to enhance your expressions
-- 🎥 **Recording** - built-in recording and camera view
-- 📤 **Portable** - export to PDF, PPTX, PNGs, or even a hostable SPA
-- 🛠 **Hackable** - virtually anything that's possible on a webpage is possible in Slidev
-<br>
-<br>
-
-Read more about [Why Slidev?](https://sli.dev/guide/why)
+<div class="flow request-flow"><div class="node">Klient HTTP</div><span class="connector">→</span><div class="node">Reverse proxy</div><span class="connector">→</span><div class="node accent">OpenWAF</div><span class="connector">→</span><div class="node">Aplikacja</div></div>
+<div class="decision-row"><span class="status blocked">Podejrzane żądanie → blokada</span><span class="status allowed">Zapis ruchu → analiza AI</span></div>
+<div class="one-line">Reguły chronią na wejściu. AI analizuje zapisane zdarzenia.</div>
 
 <!--
-You can have `style` tag in markdown to override the style for the current page.
-Learn more: https://sli.dev/features/slide-scope-style
--->
-
-<style>
-h1 {
-  background-color: #2B90B6;
-  background-image: linear-gradient(45deg, #4EC5D4 10%, #146b8c 20%);
-  background-size: 100%;
-  -webkit-background-clip: text;
-  -moz-background-clip: text;
-  -webkit-text-fill-color: transparent;
-  -moz-text-fill-color: transparent;
-}
-</style>
-
-<!--
-Here is another comment.
+Diagram rozdziela role logiczne: odbiór przez reverse proxy, kontrola reguł i przekazanie do aplikacji. Reverse proxy jest częścią implementacji OpenWAF, a nie wymaganym dodatkowym serwerem. Inspekcja odbywa się w ServeHTTP przed proxy.ServeHTTP. Po kontroli ten sam moduł proxy przekazuje żądanie do upstreamu. Nie zmieniono faktycznej architektury projektu. AI analizuje zapisaną telemetrię poza ścieżką obsługi.
+Źródła: main.go; internal/proxy/proxy.go: ServeHTTP.
 -->
 
 ---
-transition: slide-up
-level: 2
----
 
-# Navigation
+<div class="eyebrow">Mechanizmy obrony</div>
 
-Hover on the bottom-left corner to see the navigation's controls panel, [learn more](https://sli.dev/guide/ui#navigation-bar)
+# Trzy warstwy kontroli
 
-## Keyboard Shortcuts
-
-|                                                     |                             |
-| --------------------------------------------------- | --------------------------- |
-| <kbd>right</kbd> / <kbd>space</kbd>                 | next animation or slide     |
-| <kbd>left</kbd>  / <kbd>shift</kbd><kbd>space</kbd> | previous animation or slide |
-| <kbd>up</kbd>                                       | previous slide              |
-| <kbd>down</kbd>                                     | next slide                  |
-
-<!-- https://sli.dev/guide/animations.html#click-animation -->
-<img
-  v-click
-  class="absolute -bottom-9 -left-7 w-80 opacity-50"
-  src="https://sli.dev/assets/arrow-bottom-left.svg"
-  alt=""
-/>
-<p v-after class="absolute bottom-23 left-45 opacity-30 transform -rotate-10">Here!</p>
-
----
-layout: two-cols
-layoutClass: gap-16
----
-
-# Table of contents
-
-You can use the `Toc` component to generate a table of contents for your slides:
-
-```html
-<Toc minDepth="1" maxDepth="1" />
-```
-
-The title will be inferred from your slide content, or you can override it with `title` and `level` in your frontmatter.
-
-::right::
-
-<Toc text-sm minDepth="1" maxDepth="2" />
-
----
-layout: image-right
-image: https://cover.sli.dev
----
-
-# Code
-
-Use code snippets and get the highlighting directly, and even types hover!
-
-```ts [filename-example.ts] {all|4|6|6-7|9|all} twoslash
-// TwoSlash enables TypeScript hover information
-// and errors in markdown code blocks
-// More at https://shiki.style/packages/twoslash
-import { computed, ref } from 'vue'
-
-const count = ref(0)
-const doubled = computed(() => count.value * 2)
-
-doubled.value = 2
-```
-
-<arrow v-click="[4, 5]" x1="350" y1="310" x2="195" y2="342" color="#953" width="2" arrowSize="1" />
-
-<!-- This allow you to embed external code blocks -->
-<<< @/snippets/external.ts#snippet
-
-<!-- Footer -->
-
-[Learn more](https://sli.dev/features/line-highlighting)
-
-<!-- Inline style -->
-<style>
-.footnotes-sep {
-  @apply mt-5 opacity-10;
-}
-.footnotes {
-  @apply text-sm opacity-75;
-}
-.footnote-backref {
-  display: none;
-}
-</style>
+<div class="cards three"><div class="card"><span class="card-index">01</span><h3>Limity</h3><p>Limit na IP i usługę.<br>Kontrola rozmiaru body.</p></div><div class="card"><span class="card-index">02</span><h3>Reguły własne</h3><p>IP, ścieżki, parametry, nagłówki.<br>Wyjątki dla wybranych reguł.</p></div><div class="card"><span class="card-index">03</span><h3>Coraza + CRS</h3><p>SQL injection, XSS, wykonanie kodu.<br>CRS 4.25 + konfiguracja bazowa.</p></div></div>
+<div class="pills protection-options"><span>Blokowanie / wykrywanie / wyłączona ochrona</span><span>Poziom kontroli i próg blokady</span><span>Polityka globalna lub per usługa</span></div>
+<ScreenshotSlot class="defence-metrics" src="/screenshots/dashboard.png" title="Blokady i statystyki ochrony — dane demo" :crop="[0.18, 0.14, 0.8, 0.21]" />
 
 <!--
-Notes can also sync with clicks
-
-[click] This will be highlighted after the first click
-
-[click] Highlighted with `count = ref(0)`
-
-[click:3] Last click (skip two clicks)
+Rate limiter działa lokalnie w pamięci procesu, osobno dla pary usługa/IP. Reguła własna pasuje, gdy spełnione są wszystkie jej warunki. Blokada własna lub limitu ruchu może zakończyć inspekcję przed CRS. Limit body sprawdzany jest podczas transakcji Coraza, nie jako odrębny pierwszy etap. exposure.conf wykrywa .env, wybrane ścieżki .git oraz /util/php/eval-stdin.php związany z CVE-2017-9841. Te reguły nie gwarantują ochrony przed wszystkimi wariantami ataków. Inspekcja body odpowiedzi jest wyłączona. Aktualizacja ładuje także bazowy crs-setup.conf.example przed polityką i regułami CRS. Domyślna polityka: blocking, poziom blokowania 1, wykrywania 2, próg oceny 5, body 13 MiB, limit 600/min z akcją logowania. Katalog otrzymał czytelne opisy reguł wbudowanych. Wyłączenia ID oraz polityki usług pozwalają ograniczać fałszywe alarmy po weryfikacji operatora.
+Źródła: internal/rules/inspect.go: Inspect i matches; internal/rules/engine.go: compile; internal/rules/filters/exposure.conf.
 -->
 
 ---
-level: 2
----
 
-# Shiki Magic Move
+<div class="eyebrow">Nowość · geolokalizacja ruchu</div>
 
-Powered by [shiki-magic-move](https://shiki-magic-move.netlify.app/), Slidev supports animations across multiple code snippets.
+# Skąd przychodzą żądania?
 
-Add multiple code blocks and wrap them with <code>````md magic-move</code> (four backticks) to enable the magic move. For example:
-
-````md magic-move {lines: true}
-```ts {*|2|*}
-// step 1
-const author = reactive({
-  name: 'John Doe',
-  books: [
-    'Vue 2 - Advanced Guide',
-    'Vue 3 - Basic Guide',
-    'Vue 4 - The Mystery'
-  ]
-})
-```
-
-```ts {*|1-2|3-4|3-4,8}
-// step 2
-export default {
-  data() {
-    return {
-      author: {
-        name: 'John Doe',
-        books: [
-          'Vue 2 - Advanced Guide',
-          'Vue 3 - Basic Guide',
-          'Vue 4 - The Mystery'
-        ]
-      }
-    }
-  }
-}
-```
-
-```ts
-// step 3
-export default {
-  data: () => ({
-    author: {
-      name: 'John Doe',
-      books: [
-        'Vue 2 - Advanced Guide',
-        'Vue 3 - Basic Guide',
-        'Vue 4 - The Mystery'
-      ]
-    }
-  })
-}
-```
-
-Non-code blocks are ignored.
-
-```vue
-<!-- step 4 -->
-<script setup>
-const author = {
-  name: 'John Doe',
-  books: [
-    'Vue 2 - Advanced Guide',
-    'Vue 3 - Basic Guide',
-    'Vue 4 - The Mystery'
-  ]
-}
-</script>
-```
-````
-
----
-
-# Components
-
-<div grid="~ cols-2 gap-4">
-<div>
-
-You can use Vue components directly inside your slides.
-
-We have provided a few built-in components like `<Tweet/>`, `<BlueSky/>`, and `<Youtube/>` that you can use directly. And adding your custom components is also super easy.
-
-```html
-<Counter :count="10" />
-```
-
-<!-- ./components/Counter.vue -->
-<Counter :count="10" m="t-4" />
-
-Check out [the guides](https://sli.dev/builtin/components.html) for more.
-
-</div>
-<div>
-
-```html
-<Tweet id="1390115482657726468" />
-```
-
-<Tweet id="1390115482657726468" scale="0.65" />
-
-</div>
-</div>
+<ScreenshotSlot class="geo-screen" src="/screenshots/geo.png" title="Mapa krajów i udział ruchu — aktualny panel, dane demonstracyjne" />
+<div class="pills geo-options"><span>Cały ruch lub blokady</span><span>24 h / 7 dni / 30 dni</span><span>Ranking krajów i udział procentowy</span></div>
 
 <!--
-Presenter note with **bold**, *italic*, and ~~striked~~ text.
-
-Also, HTML elements are valid:
-<div class="flex w-full">
-  <span style="flex-grow: 1;">Left content</span>
-  <span>Right content</span>
-</div>
+Nowy DashboardGeoMap korzysta z /api/stats/countries. Lokalna baza DB-IP przypisuje kraj przy zapisie żądania; zapytanie mapy agreguje zapisane kody. Ranking pokazuje osiem pierwszych grup oraz liczbę pozostałych. Brak lokalizacji jest osobną kategorią i nie trafia na mapę. Kraj jest wskazówką analityczną, nie dowodem tożsamości ani intencji nadawcy. Widok blokad pomaga porównać źródła ruchu z odrzuconymi żądaniami. API pozwala też filtrować usługę. Dane na zrzucie pochodzą z izolowanej bazy demonstracyjnej.
+Źródła: frontend/app/components/dashboard/DashboardGeoMap.vue; frontend/app/utils/geoMap.ts; docs/country-stats-api.md; internal/geoip.
 -->
 
 ---
-class: px-20
----
 
-# Themes
+<div class="eyebrow">Panel OpenWAF · dane demonstracyjne</div>
 
-Slidev comes with powerful theming support. Themes can provide styles, layouts, components, or even configurations for tools. Switching between themes by just **one edit** in your frontmatter:
+# Ruch i blokady na jednym ekranie
 
-<div grid="~ cols-2 gap-2" m="t-2">
+<ScreenshotSlot class="full-screen" src="/screenshots/dashboard-update.png" title="Aktualny panel OpenWAF — rzeczywisty zrzut na danych demo" />
 
-```yaml
----
-theme: default
----
-```
-
-```yaml
----
-theme: seriph
----
-```
-
-<img border="rounded" src="https://github.com/slidevjs/themes/blob/main/screenshots/theme-default/01.png?raw=true" alt="">
-
-<img border="rounded" src="https://github.com/slidevjs/themes/blob/main/screenshots/theme-seriph/01.png?raw=true" alt="">
-
-</div>
-
-Read more about [How to use a theme](https://sli.dev/guide/theme-addon#use-theme) and
-check out the [Awesome Themes Gallery](https://sli.dev/resources/theme-gallery).
+<!--
+Zrzut rzeczywistego panelu po aktualizacji, przewiniętego do metryk i wykresów pod nową mapą. Osobna baza zawiera 6000 żądań z cmd/seed oraz 35 nowych syntetycznych blokad dla detektora. Zakres 30 dni może wykluczać najstarsze żądania generatora. Obraz: public/screenshots/dashboard-update.png. Interfejs i statystyki pochodzą z działającej aplikacji; dane są demonstracyjne.
+Źródła funkcji: internal/telemetry/service.go; frontend.
+-->
 
 ---
 
-# Clicks Animations
+<div class="eyebrow">Wykrywanie anomalii</div>
 
-You can add `v-click` to elements to add a click animation.
+# Anomalia → dochodzenie → analiza AI
 
-<div v-click>
+<div class="anomaly-layout"><div class="signal-list"><div><span class="dot red"></span>Seria blokad <small>≥ 10 / 5 min</small></div><div><span class="dot amber"></span>Dopasowania reguł <small>≥ 10 / 5 min</small></div><div><span class="dot amber"></span>Skanowanie <small>≥ 30 żądań, 20 ścieżek</small></div><div><span class="dot violet"></span>Błędy upstreamu <small>≥ 20 i ≥ 50%</small></div><div><span class="dot sky"></span>Skok ruchu <small>≥ 100/min i 4× średnia</small></div><p>Progi globalne lub dla usługi.</p></div><ScreenshotSlot src="/screenshots/dashboard.png" title="Wykres ruchu w panelu OpenWAF — dane demo" :crop="[0.18, 0.365, 0.535, 0.54]" /></div>
 
-This shows up when you press <kbd>space</kbd> or <kbd>right</kbd>, or click outside the slide on the right.
-
-```html
-<div v-click>This shows up when you trigger a click animation.</div>
-```
-
-</div>
-
-<p v-click>
-You can also add modifiers to change the animation:
-</p>
-
-<div class="grid gap-3 mt-4 text-sm" style="grid-template-columns: repeat(3, 1fr) 1.5fr 1fr">
-  <div v-after.up class="p-3 rounded border border-primary/20 bg-primary/10">
-    <div class="font-mono text-xs opacity-60 mb-1">v-click.up</div>
-    <div>Slide from bottom</div>
-  </div>
-  <div v-click.fade-in class="p-3 rounded border border-primary/30 bg-primary/15">
-    <div class="font-mono text-xs opacity-60 mb-1">v-click.fade-in</div>
-    <div>Fade in</div>
-  </div>
-  <div v-click.fade class="p-3 rounded border border-primary/40 bg-primary/20">
-    <div class="font-mono text-xs opacity-60 mb-1">v-click.fade</div>
-    <div>Dim (0.5 opacity)</div>
-  </div>
-  <div v-click.fade.right.scale class="p-3 rounded border border-primary/50 bg-primary/25">
-    <div class="font-mono text-xs opacity-60 mb-1">v-click.fade.right.scale</div>
-    <div>Composed</div>
-  </div>
-  <div v-click.none class="p-3 rounded border border-primary/60 bg-primary/30">
-    <div class="font-mono text-xs opacity-60 mb-1">v-click.none</div>
-    <div>No transition</div>
-  </div>
-</div>
-
-<v-click>
-
-The <span v-mark.red="7"><code>v-mark</code> directive</span>
-also allows you to add
-<span v-mark.circle.orange="8">inline marks</span>
-, powered by [Rough Notation](https://roughnotation.com/):
-
-```html
-<span v-mark.underline.orange>inline markers</span>
-```
-
-</v-click>
-
-<div v-click mt-12>
-
-[Learn more](https://sli.dev/guide/animations#click-animation)
-
-</div>
+<!--
+Progi konfiguruje się globalnie i dla usług. Agregacja używa minutowych koszyków oraz trwałego kursora; ocena dotyczy zakończonych koszyków. Pierwsze uruchomienie zaczyna od najnowszego logu. Skok ruchu wymaga około 31 minut ciągłego zbierania na rozgrzanie średniej. Skanowanie wymaga trzech podejrzanych żądań lub trzech odpowiedzi 400/404/405. Błędy upstreamu to kategorie błędów proxy, nie wszystkie odpowiedzi 5xx. Powiązana aktywność jest korelowana według rodziny detektora, usługi i IP. Podwojenie pomiaru może ominąć cooldown po minucie. Anomalia nie dowodzi ataku. Wykonanie AI wymaga konfiguracji modelu i wolnego budżetu uruchomień.
+Źródła: docs/investigations-api.md: Detection and limits; internal/investigation/detector.go.
+-->
 
 ---
 
-# Motions
+<div class="eyebrow">Jak działa AI</div>
 
-Motion animations are powered by [@vueuse/motion](https://motion.vueuse.org/), triggered by `v-motion` directive.
+# AI sprawdza dane i wyjaśnia zdarzenia
 
-```html
-<div
-  v-motion
-  :initial="{ x: -80 }"
-  :enter="{ x: 0 }"
-  :click-3="{ x: 80 }"
-  :leave="{ x: 1000 }"
->
-  Slidev
-</div>
-```
+<div class="ai-layout"><div><div class="analysis-step"><span>01</span><strong>Pytanie lub wykryta anomalia</strong></div><div class="analysis-step"><span>02</span><strong>Narzędzia: ruch, reguły, logi</strong></div><div class="analysis-step"><span>03</span><strong>Ocena, dowody i zalecenia</strong></div><div class="pills"><span>Rozmowa z asystentem</span><span>Automatyczna analiza</span></div><div class="one-line">AI odczytuje dane. Nie zmienia reguł ani nie blokuje ruchu.</div></div><ScreenshotSlot class="report-focus" src="/screenshots/assistant.png" title="Rzeczywista odpowiedź AI z oceną i dowodem — dane demo" :crop="[0.767, 0.245, 0.225, 0.525]" /></div>
 
-<div class="w-60 relative">
-  <div class="relative w-40 h-40">
-    <img
-      v-motion
-      :initial="{ x: 800, y: -100, scale: 1.5, rotate: -50 }"
-      :enter="final"
-      class="absolute inset-0"
-      src="https://sli.dev/logo-square.png"
-      alt=""
-    />
-    <img
-      v-motion
-      :initial="{ y: 500, x: -100, scale: 2 }"
-      :enter="final"
-      class="absolute inset-0"
-      src="https://sli.dev/logo-circle.png"
-      alt=""
-    />
-    <img
-      v-motion
-      :initial="{ x: 600, y: 400, scale: 2, rotate: 100 }"
-      :enter="final"
-      class="absolute inset-0"
-      src="https://sli.dev/logo-triangle.png"
-      alt=""
-    />
-  </div>
-
-  <div
-    class="text-5xl absolute top-14 left-40 text-[#2B90B6] -z-1"
-    v-motion
-    :initial="{ x: -80, opacity: 0}"
-    :enter="{ x: 0, opacity: 1, transition: { delay: 2000, duration: 1000 } }">
-    Slidev
-  </div>
-</div>
-
-<!-- vue script setup scripts can be directly used in markdown, and will only affects current page -->
-<script setup lang="ts">
-const final = {
-  x: 0,
-  y: 0,
-  rotate: 0,
-  scale: 1,
-  transition: {
-    type: 'spring',
-    damping: 10,
-    stiffness: 20,
-    mass: 2
-  }
-}
-</script>
-
-<div
-  v-motion
-  :initial="{ x:35, y: 30, opacity: 0}"
-  :enter="{ y: 0, opacity: 1, transition: { delay: 3500 } }">
-
-[Learn more](https://sli.dev/guide/animations.html#motion)
-
-</div>
+<!--
+Naturalne polskie nazewnictwo zastępuje dosłowne tłumaczenia i nazwy funkcji na slajdzie. Narzędzia w kodzie to m.in. get_request_stats, get_traffic, get_threats, search_requests i get_request. Raport automatyczny składany jest przez submit_finding. Orkiestrację realizuje Eino ADK. Model używa API z tool calling, domyślnie OpenRouter. AI_KEY i AI_MODEL włączają asystenta. Nie jest to własny klasyfikator ML decydujący o blokadzie. Odpowiedź przesyłana jest przez SSE. Raport rozróżnia aktywność prawdopodobnie złośliwą, prawdopodobnie nieszkodliwą i wynik nierozstrzygnięty. Automatyczna analiza: jeden worker, kolejka do 100 aktywnych wykonań, domyślnie 20 przyjęć/uruchomień na godzinę, maksymalnie dwie próby; pojedyncza próba do 3 minut, 8 iteracji modelu i 24 wywołań narzędzi. Są to limity wykonania, nie budżet pieniężny. Weryfikacja cytowanych żądań sprawdza referencje, nie gwarantuje poprawności interpretacji AI.
+Źródła: internal/assistant/service.go; internal/assistant/tools.go; internal/assistant/investigation.go; docs/assistant-api.md.
+-->
 
 ---
 
-# $\LaTeX$
+<div class="eyebrow">Nowość · sekcja dochodzeń</div>
 
-$\LaTeX$ is supported out-of-box. Powered by [$\KaTeX$](https://katex.org/).
+# Wszystkie analizy w jednym miejscu
 
-<div h-3 />
+<ScreenshotSlot class="full-screen investigations-screen" src="/screenshots/investigations.png" title="Lista dochodzeń w aktualnym panelu — dane demonstracyjne" />
+<div class="pills under-screen"><span>Filtry: usługa, status, waga i ocena</span><span>Aktualizacje na żywo</span><span>Nieprzeczytane wyniki</span></div>
 
-Inline $\sqrt{3x-1}+(1+x)^2$
-
-Block
-$$ {1|3|all}
-\begin{aligned}
-\nabla \cdot \vec{E} &= \frac{\rho}{\varepsilon_0} \\
-\nabla \cdot \vec{B} &= 0 \\
-\nabla \times \vec{E} &= -\frac{\partial\vec{B}}{\partial t} \\
-\nabla \times \vec{B} &= \mu_0\vec{J} + \mu_0\varepsilon_0\frac{\partial\vec{E}}{\partial t}
-\end{aligned}
-$$
-
-[Learn more](https://sli.dev/features/latex)
+<!--
+Nowa strona /dash/investigations pokazuje powód wykrycia, stan wykonania i wynik w jednym zasobie. Zestawienie zawiera liczniki wszystkich, nieprzeczytanych, aktywnych i poważnych spraw. Filtry obejmują usługę, stan obsługi, status analizy, wagę, ocenę, czas i nieprzeczytane. SSE aktualizuje listę i licznik w nawigacji. Stan obsługi jest wspólny, a przeczytanie jest indywidualne dla operatora. Nowa wersja wyniku ponownie oznacza sprawę jako nieprzeczytaną. Detektor utworzył widoczne sprawy na nowych syntetycznych logach; nie są one raportami wygenerowanymi przez AI.
+Źródła: frontend/app/pages/dash/investigations.vue; frontend/app/composables/useInvestigationFeed.ts; docs/investigations-api.md.
+-->
 
 ---
 
-# Diagrams
+<div class="eyebrow">Nowość · obsługa zdarzenia</div>
 
-You can create diagrams / graphs from textual descriptions, directly in your Markdown.
+# Od sygnału do decyzji operatora
 
-<div class="grid grid-cols-4 gap-5 pt-4 -mb-6">
+<div class="detail-layout"><div class="detail-points"><div><strong>Powód wykrycia</strong><p>Pomiar, próg i okno czasowe.</p></div><div><strong>Wynik i dowody</strong><p>Ocena, konkretne żądania, zalecenia.</p></div><div><strong>Obsługa sprawy</strong><p>Potwierdź, rozwiąż lub odrzuć.</p></div><div><strong>Dalsza analiza</strong><p>Ponów, anuluj lub dopytaj asystenta.</p></div></div><div><ScreenshotSlot src="/screenshots/investigation-detail.png" title="Powód wykrycia, obserwacja i próg — dane demonstracyjne" :crop="[0, 0.15, 1, 0.41]" /><ScreenshotSlot class="detail-actions" src="/screenshots/investigation-detail.png" title="Działania operatora w szczegółach dochodzenia" :crop="[0, 0.935, 1, 0.065]" /></div></div>
 
-```mermaid {scale: 0.5, alt: 'A simple sequence diagram'}
-sequenceDiagram
-    Alice->John: Hello John, how are you?
-    Note over Alice,John: A typical interaction
-```
-
-```mermaid {theme: 'neutral', scale: 0.8}
-graph TD
-B[Text] --> C{Decision}
-C -->|One| D[Result 1]
-C -->|Two| E[Result 2]
-```
-
-```mermaid
-mindmap
-  root((mindmap))
-    Origins
-      Long history
-      ::icon(fa fa-book)
-      Popularisation
-        British popular psychology author Tony Buzan
-    Research
-      On effectiveness<br/>and features
-      On Automatic creation
-        Uses
-            Creative techniques
-            Strategic planning
-            Argument mapping
-    Tools
-      Pen and paper
-      Mermaid
-```
-
-```plantuml {scale: 0.7}
-@startuml
-
-package "Some Group" {
-  HTTP - [First Component]
-  [Another Component]
-}
-
-node "Other Groups" {
-  FTP - [Second Component]
-  [First Component] --> FTP
-}
-
-cloud {
-  [Example 1]
-}
-
-database "MySql" {
-  folder "This is my folder" {
-    [Folder 3]
-  }
-  frame "Foo" {
-    [Frame 4]
-  }
-}
-
-[Another Component] --> [Example 1]
-[Example 1] --> [Folder 3]
-[Folder 3] --> [Frame 4]
-
-@enduml
-```
-
-</div>
-
-Learn more: [Mermaid Diagrams](https://sli.dev/features/mermaid) and [PlantUML Diagrams](https://sli.dev/features/plantuml)
-
----
-foo: bar
-dragPos:
-  square: 691,32,167,_,-16
----
-
-# Draggable Elements
-
-Double-click on the draggable elements to edit their positions.
-
-<br>
-
-###### Directive Usage
-
-```md
-<img v-drag="'square'" src="https://sli.dev/logo.png">
-```
-
-<br>
-
-###### Component Usage
-
-```md
-<v-drag text-3xl>
-  <div class="i-carbon:arrow-up" />
-  Use the `v-drag` component to have a draggable container!
-</v-drag>
-```
-
-<v-drag pos="663,206,261,_,-15">
-  <div text-center text-3xl border border-main rounded>
-    Double-click me!
-  </div>
-</v-drag>
-
-<img v-drag="'square'" src="https://sli.dev/logo.png">
-
-###### Draggable Arrow
-
-```md
-<v-drag-arrow two-way />
-```
-
-<v-drag-arrow pos="67,452,253,46" two-way op70 />
-
----
-src: ./pages/imported-slides.md
-hide: false
----
+<!--
+Szczegóły dochodzenia łączą trigger, postęp, ostatni opublikowany raport i rozmowę uzupełniającą. Raport zawiera wagę, ocenę likely_malicious / likely_benign / inconclusive, wyjaśnienie, wzorce, rekomendacje, ograniczenia oraz dowody. Backend sprawdza, czy cytowane ID żądań wystąpiły w wynikach narzędzi i nadal istnieją przy publikacji. Zapisane migawki dowodów zostają po usunięciu zwykłych logów przez retencję. Brak dowodów wymusza ocenę nierozstrzygniętą i jawne ograniczenia. Ponowienie zachowuje ID sprawy i poprzedni raport; anulowanie nie kasuje opublikowanego wyniku. Rozmowa uzupełniająca jest osobna dla każdego operatora. Zrzut pokazuje wykrycie bez raportu AI; możliwości raportowania wyjaśnia slajd i notatki.
+Źródła: frontend/app/components/dashboard/DashboardInvestigationDetail.vue; DashboardInvestigationFollowUp.vue; docs/investigations-api.md.
+-->
 
 ---
 
-# Monaco Editor
+<div class="eyebrow">OpenWAF</div>
 
-Slidev provides built-in Monaco Editor support.
+# Chroń. Obserwuj. Wyjaśniaj.
 
-Add `{monaco}` to the code block to turn it into an editor:
+<div class="closing-layout"><div><div class="closing-word"><span>01</span>Reguły WAF</div><div class="closing-word"><span>02</span>Mapa i dochodzenia</div><div class="closing-word"><span>03</span>Asystent AI</div><div class="one-line">Proste wdrożenie · polityki usług · dowody w jednym panelu.</div></div><ScreenshotSlot src="/screenshots/dashboard.png" title="Podział zagrożeń w panelu OpenWAF — dane demo" :crop="[0.723, 0.365, 0.26, 0.55]" /></div>
 
-```ts {monaco}
-import { ref } from 'vue'
-import { emptyArray } from './external'
-
-const arr = ref(emptyArray(10))
-```
-
-Use `{monaco-run}` to create an editor that can execute the code directly in the slide:
-
-```ts {monaco-run}
-import { version } from 'vue'
-import { emptyArray, sayHello } from './external'
-
-sayHello()
-console.log(`vue ${version}`)
-console.log(emptyArray<number>(10).reduce(fib => [...fib, fib.at(-1)! + fib.at(-2)!], [1, 1]))
-```
-
----
-layout: center
-class: text-center
----
-
-# Learn More
-
-[Documentation](https://sli.dev) · [GitHub](https://github.com/slidevjs/slidev) · [Showcases](https://sli.dev/resources/showcases)
-
-<PoweredBySlidev mt-10 />
+<!--
+Ochrona deterministyczna działa podczas obsługi ruchu, detektory wskazują nietypową aktywność, a model interpretuje dowody. AI nie zastępuje decyzji operatora. Kod wyłącza SecResponseBodyAccess i nie uruchamia faz inspekcji odpowiedzi Coraza. Limiter w pamięci nie zapewnia wspólnego limitu wielu instancji. Dochodzenia zależą od telemetrii, retencji, kompletności zbierania i konfiguracji AI. Nie należy obiecywać ochrony przed wolumetrycznym DDoS na podstawie limitera HTTP. Bez AI_KEY asystent jest wyłączony, ale reguły działają. Przebieg pracy operatora jest syntezą funkcji projektu.
+Źródła: internal/rules/engine.go; internal/rules/inspect.go; internal/assistant/service.go; docs/assistant-api.md; docs/investigations-api.md; README.md.
+-->
