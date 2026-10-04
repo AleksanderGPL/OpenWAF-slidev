@@ -30,3 +30,6 @@
 .closing-layout .one-line { font-size: 18px; }
 .detail-actions { margin-top: 25px; }
 .investigations-screen { width: 710px; }
+.closing-layout .screenshot { width: 300px; justify-self: end; }
+.ai-disclosure { margin-top: 20px; padding-top: 13px; border-top: 1px solid var(--border); font-size: 16px; line-height: 1.4; color: var(--muted); }
+.ai-disclosure strong { color: var(--sky); font-weight: 500; }.ai-disclosure p { margin-top: 4px; }

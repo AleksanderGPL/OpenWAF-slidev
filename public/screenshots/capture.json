@@ -1,0 +1,18 @@
+{
+  "capturedAt": "2026-10-04T07:47:01.862Z",
+  "appCommit": "a5ec6e7",
+  "dataset": "Isolated demo: 6000 seeded requests and 35 synthetic blocks",
+  "assistant": "Existing real model response, recaptured in current UI; no new model call",
+  "images": [
+    "dashboard.png",
+    "dashboard-update.png",
+    "geo.png",
+    "investigations.png",
+    "investigation-detail.png",
+    "assistant.png",
+    "assistant-report.png",
+    "metrics.png",
+    "traffic.png",
+    "threats.png"
+  ]
+}
